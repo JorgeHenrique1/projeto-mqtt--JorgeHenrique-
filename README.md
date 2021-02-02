@@ -28,3 +28,4 @@ Foram utilizadas as seguintes bibliotecas:
 
 Autor: Jorge Henrique
 
+[](https://www.linkedin.com/feed/)
