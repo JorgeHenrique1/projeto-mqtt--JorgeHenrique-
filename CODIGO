@@ -1,35 +1,33 @@
 #include <PubSubClient.h>
 
-  
 #include <UIPEthernet.h>
 #include <utility/logging.h>
 
 #include <SPI.h>
 
+int pino2 = 2;
+bool estado_sensor;
+
 
 //Define o endereço MAC que será utilizado
 byte mac[] = {0x20, 0xe6, 0x38, 0x57, 0x93, 0x08};
-
 boolean mensagem;
-
-    int pino2 = 2; 
-bool estado_sensor;
 
 //Inicia o cliente Ethernet
 EthernetClient client;
+
 PubSubClient mqttClient(client);
 
 void setup() {
-
-  pinMode(pino2,INPUT_PULLUP);
-
     //Inicia o controlador Ethernet e solicita um IP para o servidor de DHCP
     Ethernet.begin(mac);
 
     //Inicia o monitor Serial
     Serial.begin(9600);
-
+    
     mqttClient.setServer("54.144.190.205",1883);
+
+    pinMode(pino2,INPUT_PULLUP);
 
     //Exibe no Monitor Serial as informações sobre o IP do Arduino
     Serial.print("O IP do Arduino e: ");
@@ -47,35 +45,28 @@ void setup() {
     Serial.println("");
 
 }
-
 void loop() {
+  mqttClient.connect("miguelpierre");
+    mensagem = mqttClient.publish( "miguelpierre-T", "Mensagem enviada" );
+    //Serial.println(mensagem);
 
-if(estado_sensor == 1){
-  estado_sensor = digitalRead(pino2);
-  
-   mqttClient.connect("jorgehenrique");
+    estado_sensor = digitalRead(pino2);
 
-  mensagem = mqttClient.publish("jorgehenrique-h",
-  "Aberto");
+  if (estado_sensor == 1)
+  {
+    mqttClient.connect("jorgehenrique");
+    mensagem = mqttClient.publish("jorgehenrique-h","porta aberta");
+    Serial.println("Porta aberta");
+    Serial.println(estado_sensor);  
+  }
 
-  mqttClient.loop();
-
-  Serial.println(estado_sensor);
-  Serial.println("Aberto");
- 
-}
-if(estado_sensor == 0){
-  mqttClient.connect("jorgehenrique");
-
-  mensagem = mqttClient.publish("jorgehenrique-h",
-  "fechado");
-
-  mqttClient.loop();
-
-  estado_sensor = digitalRead(pino2);
-
-  Serial.println(estado_sensor);
-  Serial.println("Fechado");
-}
-
+   if (estado_sensor == 0)
+  {
+    mqttClient.connect("jorgehenrique");
+    mensagem = mqttClient.publish("jorgehenrique-h","porta fechada");
+    Serial.println("Porta fechada");
+    Serial.println(estado_sensor);
+  }
+    
+    mqttClient.loop();
 }
