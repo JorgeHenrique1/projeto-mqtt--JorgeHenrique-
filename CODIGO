@@ -46,7 +46,7 @@ void setup() {
 
 }
 void loop() {
-  mqttClient.connect("miguelpierre");
+  mqttClient.connect("jorgehenrique");
     mensagem = mqttClient.publish( "miguelpierre-T", "Mensagem enviada" );
     //Serial.println(mensagem);
 
